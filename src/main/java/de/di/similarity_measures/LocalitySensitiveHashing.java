@@ -38,37 +38,38 @@ public class LocalitySensitiveHashing implements SimilarityMeasure {
      */
     @Override
     public double calculate(final String string1, final String string2) {
-        String[] strings1 = this.tokenizer.tokenize(string1);
-        String[] strings2 = this.tokenizer.tokenize(string2);
-        return this.calculate(strings1, strings2);
+        String[] tokens1 = this.tokenizer.tokenize(string1);
+        String[] tokens2 = this.tokenizer.tokenize(string2);
+        return this.calculate(tokens1, tokens2);
     }
 
     /**
      * Calculates the LSH similarity of the two input string arrays.
-     * The LHS algorithm calculates the LHS signatures by applying its internal MinHash functions to the two input string
+     * The LSH algorithm calculates the LSH signatures by applying its internal MinHash functions to the two input string
      * lists. Then, it uses the two signatures to approximate the Jaccard similarity of the two strings with their
      * signatures by simply applying the Jaccard algorithm on the two signatures.
-     * @param strings1 The first string argument for the similarity calculation.
-     * @param strings2 The second string argument for the similarity calculation.
+     * @param tokens1 The first string argument for the similarity calculation.
+     * @param tokens2 The second string argument for the similarity calculation.
      * @return The LSH similarity (= Jaccard approximation) of the two arguments.
      */
     @Override
     public double calculate(final String[] strings1, final String[] strings2) {
         double lshJaccard = 0;
 
-        String[] signature1 = new String[this.minHashFunctions.size()];
-        String[] signature2 = new String[this.minHashFunctions.size()];
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //                                      DATA INTEGRATION ASSIGNMENT                                           //
-        // Calculate the two signatures by using the internal MinHash functions. Then, use the signatures to          //
-        // approximate the Jaccard similarity.                                                                        //
-
-
-
-        //                                                                                                            //
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        String[] signature1 = calculateMinHashSignatures(strings1);
+        String[] signature2 = calculateMinHashSignatures(strings2);
+        Jaccard jaccard = new Jaccard(this.tokenizer, this.bagSemantics);
+        lshJaccard = jaccard.calculate(signature1,signature2);
         return lshJaccard;
+    }
+
+    private String[] calculateMinHashSignatures(final String[] strings) {
+        String[] signatures = new String[this.minHashFunctions.size()];
+
+        for (int i = 0; i < this.minHashFunctions.size(); i++) {
+            signatures[i] = this.minHashFunctions.get(i).hash(strings);
+        }
+
+        return signatures;
     }
 }

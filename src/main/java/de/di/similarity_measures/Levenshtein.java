@@ -23,28 +23,14 @@ public class Levenshtein implements SimilarityMeasure {
      */
     @Override
     public double calculate(final String string1, final String string2) {
-        double levenshteinSimilarity = 0;
+        double levenshteinSimilarity = 0.0;
 
-        int[] upperupperLine = new int[string1.length() + 1];   // line for Demarau lookups
-        int[] upperLine = new int[string1.length() + 1];        // line for regular Levenshtein lookups
-        int[] lowerLine = new int[string1.length() + 1];        // line to be filled next by the algorithm
+        // Converting strings to arrays of single-character strings
+        String[] strings1 = string1.chars().mapToObj(c -> String.valueOf((char) c)).toArray(String[]::new);
+        String[] strings2 = string2.chars().mapToObj(c -> String.valueOf((char) c)).toArray(String[]::new);
 
-        // Fill the first line with the initial positions (= edits to generate string1 from nothing)
-        for (int i = 0; i <= string1.length(); i++)
-            upperLine[i] = i;
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //                                      DATA INTEGRATION ASSIGNMENT                                           //
-        // Use the three provided lines to successively calculate the Levenshtein matrix with the dynamic programming //
-        // algorithm. Depending on whether the inner flag withDamerau is set, the Damerau extension rule should be    //
-        // used during calculation or not. Hint: Implement the Levenshtein algorithm here first, then copy the code   //
-        // to the String tuple function and adjust it a bit to work on the arrays - the algorithm is the same.        //
-
-
-
-        //                                                                                                            //
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        // Call the string[] calculate method and reuse the logic
+        levenshteinSimilarity = calculate(strings1, strings2);
         return levenshteinSimilarity;
     }
 
@@ -59,28 +45,37 @@ public class Levenshtein implements SimilarityMeasure {
      */
     @Override
     public double calculate(final String[] strings1, final String[] strings2) {
-        double levenshteinSimilarity = 0;
+        double levenshteinSimilarity = 0.0;
 
-        int[] upperupperLine = new int[strings1.length + 1];   // line for Damerau lookups
-        int[] upperLine = new int[strings1.length + 1];        // line for regular Levenshtein lookups
-        int[] lowerLine = new int[strings1.length + 1];        // line to be filled next by the algorithm
+        int m = strings1.length;
+        int n = strings2.length;
 
-        // Fill the first line with the initial positions (= edits to generate string1 from nothing)
-        for (int i = 0; i <= strings1.length; i++)
+        int[] upperupperLine = new int[m + 1];   // line for Damerau lookups
+        int[] upperLine = new int[m + 1];        // line for regular Levenshtein lookups
+        int[] lowerLine = new int[m + 1];        // line to be filled next by the algorithm
+
+        for (int i = 0; i <= m; i++) {
             upperLine[i] = i;
+        }
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //                                      DATA INTEGRATION ASSIGNMENT                                           //
-        // Use the three provided lines to successively calculate the Levenshtein matrix with the dynamic programming //
-        // algorithm. Depending on whether the inner flag withDamerau is set, the Damerau extension rule should be    //
-        // used during calculation or not. Hint: Implement the Levenshtein algorithm above first, then copy the code  //
-        // to this function and adjust it a bit to work on the arrays - the algorithm is the same.                    //
+        for (int j = 1; j <= n; j++) {
+            lowerLine[0] = j;
+            for (int i = 1; i <= m; i++) {
+                int cost = (strings1[i - 1].equals(strings2[j - 1])) ? 0 : 1;
+                lowerLine[i] = min(lowerLine[i - 1] + 1, // insertion
+                        upperLine[i] + 1,     // deletion
+                        upperLine[i - 1] + cost); // substitution
+                if (withDamerau && i > 1 && j > 1 &&
+                        strings1[i - 1].equals(strings2[j - 2]) &&
+                        strings1[i - 2].equals(strings2[j - 1])) {
+                    lowerLine[i] = min(lowerLine[i], upperupperLine[i - 2] + cost);
+                }
+            }
+            System.arraycopy(upperLine, 0, upperupperLine, 0, m + 1);
+            System.arraycopy(lowerLine, 0, upperLine, 0, m + 1);
+        }
 
-
-
-        //                                                                                                            //
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        double levenshteinDistance = upperLine[m];
+        levenshteinSimilarity = 1.0 - (levenshteinDistance / Math.max(m, n));
         return levenshteinSimilarity;
-    }
-}
+}}
