@@ -62,17 +62,46 @@ public class PositionListIndex {
 
     private List<IntArrayList> intersect(List<IntArrayList> clusters, int[] invertedClusters) {
         List<IntArrayList> clustersIntersection = new ArrayList<>();
+        Map<Integer, IntArrayList> newClustersMap = new HashMap<>();
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //                                      DATA INTEGRATION ASSIGNMENT                                           //
-        // Calculate the intersection of one PLI's clusters and another PLI's (conveniently already inverted)         //
-        // invertedClusters. The clustersIntersection is a new list that stores the intersection result. Note that    //
-        // the clusters are "Stripped Partitions", which means that only clusters of size >1 are part of the result.  //
+        for (IntArrayList cluster : clusters) {
+            Map<Integer, IntArrayList> tempClusters = new HashMap<>();
 
+            for (int recordIndex : cluster) {
+                int otherClusterIndex = invertedClusters[recordIndex];
+                if (otherClusterIndex != -1) {
+                    tempClusters.putIfAbsent(otherClusterIndex, new IntArrayList());
+                    tempClusters.get(otherClusterIndex).add(recordIndex);
+                }
+            }
 
+            for (IntArrayList tempCluster : tempClusters.values()) {
+                if (tempCluster.size() > 1) {
+                    newClustersMap.putIfAbsent(tempCluster.hashCode(), tempCluster);
+                }
+            }
+        }
 
-        //                                                                                                            //
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        clustersIntersection.addAll(newClustersMap.values());
+
+        // Sort clusters to ensure consistent order
+        clustersIntersection.forEach(cluster -> {
+            int[] elements = cluster.toIntArray();
+            Arrays.sort(elements);
+            cluster.clear();
+            for (int element : elements) {
+                cluster.add(element);
+            }
+        });
+
+        clustersIntersection.sort((a, b) -> {
+            for (int i = 0; i < Math.min(a.size(), b.size()); i++) {
+                if (a.getInt(i) != b.getInt(i)) {
+                    return Integer.compare(a.getInt(i), b.getInt(i));
+                }
+            }
+            return Integer.compare(a.size(), b.size());
+        });
 
         return clustersIntersection;
     }

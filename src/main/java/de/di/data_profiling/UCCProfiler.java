@@ -5,8 +5,7 @@ import de.di.data_profiling.structures.AttributeList;
 import de.di.data_profiling.structures.PositionListIndex;
 import de.di.data_profiling.structures.UCC;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class UCCProfiler {
 
@@ -42,7 +41,73 @@ public class UCCProfiler {
 
         //                                                                                                            //
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        List<PositionListIndex> nextNonUniques = new ArrayList<>();
+        Set<AttributeList> checkedCombinations = new HashSet<>();
+
+        for (int size = 2; !currentNonUniques.isEmpty(); size++) {
+            nextNonUniques.clear();
+            for (int i = 0; i < currentNonUniques.size(); i++) {
+                for (int j = i + 1; j < currentNonUniques.size(); j++) {
+                    AttributeList combinedAttributes = currentNonUniques.get(i).getAttributes().union(currentNonUniques.get(j).getAttributes());
+                    if (combinedAttributes.size() == size && !checkedCombinations.contains(combinedAttributes)) {
+                        checkedCombinations.add(combinedAttributes);
+                        String[] combinedData = combineColumns(combinedAttributes, relation);
+                        PositionListIndex combinedPli = new PositionListIndex(combinedAttributes, combinedData);
+                        if (combinedPli.isUnique()) {
+                            if (isMinimal(combinedAttributes, uniques)) {
+                                uniques.add(new UCC(relation, combinedAttributes));
+                            }
+                        } else {
+                            nextNonUniques.add(combinedPli);
+                        }
+                    }
+                }
+            }
+            currentNonUniques = new ArrayList<>(nextNonUniques);
+        }
 
         return uniques;
     }
+
+    private boolean isMinimal(AttributeList candidate, List<UCC> uniques) {
+        for (UCC ucc : uniques) {
+            if (isSuperset(candidate, ucc.getAttributeList())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isSuperset(AttributeList superset, AttributeList subset) {
+        for (int attr : subset.getAttributes()) {
+            boolean found = false;
+            for (int supAttr : superset.getAttributes()) {
+                if (supAttr == attr) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String[] combineColumns(AttributeList attributes, Relation relation) {
+        int numRows = relation.getColumns()[0].length;
+        String[][] columns = relation.getColumns();
+        String[] combinedData = new String[numRows];
+
+        for (int row = 0; row < numRows; row++) {
+            StringBuilder sb = new StringBuilder();
+            for (int attribute : attributes.getAttributes()) {
+                sb.append(columns[attribute][row]).append("|"); // Use a delimiter to separate values
+            }
+            combinedData[row] = sb.toString();
+        }
+
+        return combinedData;
+    }
+
 }
