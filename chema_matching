@@ -1,0 +1,53 @@
+[33mcommit a8a8a4c0c600f555d0fa74c7f12f759514d1abb4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Emilin Treesa Joseph <emilintresia02@gmail.com>
+Date:   Thu Jun 20 18:32:51 2024 +0200
+
+    Modified Assignment
+
+[33mcommit b95c584625b7ba05a518c898ba4c7f94507694fd[m
+Author: Emilin Treesa Joseph <emilintresia02@gmail.com>
+Date:   Mon May 20 11:15:19 2024 +0200
+
+    Modified Assignment
+
+[33mcommit 9ec513854f49ca55acdd2295ecdb14bed07cf542[m
+Author: Emilin Joseph <emilintresia02@gmail.com>
+Date:   Wed Apr 10 17:44:24 2024 +0200
+
+    Fixed undeterministic file reading in tests.
+
+[33mcommit 3062b92daee8a0d2d3f782b175ddcb517c159fad[m
+Author: Thorsten Papenbrock <papenbrock@informatik.uni-marburg.de>
+Date:   Wed Apr 10 17:11:23 2024 +0200
+
+    Added missing target folders for the data matching scenarios.
+
+[33mcommit 470ed41686d2e1c842c19c51fa5a08dcb7ceccdb[m
+Author: Thorsten Papenbrock <papenbrock@informatik.uni-marburg.de>
+Date:   Wed Apr 10 11:29:34 2024 +0200
+
+    Updated the README.
+
+[33mcommit 1bca154a91de2971305acdd157465f41e9bf17c7[m
+Author: Thorsten Papenbrock <papenbrock@informatik.uni-marburg.de>
+Date:   Wed Apr 10 11:15:55 2024 +0200
+
+    Finalized the four data integration assignments.
+
+[33mcommit 99c12149f76699811fe3c93ab4317bbf686510e9[m
+Author: Thorsten Papenbrock <papenbrock@informatik.uni-marburg.de>
+Date:   Fri Mar 15 18:28:48 2024 +0100
+
+    Added a draft for the four data integration tasks.
+
+[33mcommit 848ba65fe6ca712d243f00d0b4e13a67e0312944[m
+Author: Thorsten Papenbrock <papenbrock@informatik.uni-marburg.de>
+Date:   Thu Mar 14 11:29:49 2024 +0100
+
+    Added a standard maven project.
+
+[33mcommit b8ab6068e5aa24baa47f402fe21528932de08662[m
+Author: Thorsten Papenbrock <papenbrock@informatik.uni-marburg.de>
+Date:   Thu Mar 14 09:04:24 2024 +0100
+
+    Initial commit
