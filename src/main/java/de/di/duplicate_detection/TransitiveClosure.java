@@ -26,10 +26,8 @@ public class TransitiveClosure {
         Relation relation = duplicates.iterator().next().getRelation();
         int numRecords = relation.getRecords().length;
 
-        // Initialize the adjacency matrix
         boolean[][] adjMatrix = new boolean[numRecords][numRecords];
 
-        // Populate the initial adjacency matrix based on the provided duplicates
         for (Duplicate duplicate : duplicates) {
             int id1 = duplicate.getIndex1();
             int id2 = duplicate.getIndex2();
@@ -37,7 +35,6 @@ public class TransitiveClosure {
             adjMatrix[id2][id1] = true;
         }
 
-        // Apply Warshall's algorithm to compute the transitive closure
         for (int k = 0; k < numRecords; k++) {
             for (int i = 0; i < numRecords; i++) {
                 for (int j = 0; j < numRecords; j++) {
@@ -46,7 +43,6 @@ public class TransitiveClosure {
             }
         }
 
-        // Extract the transitive closure duplicates from the djacency matrix
         for (int i = 0; i < numRecords; i++) {
             for (int j = i + 1; j < numRecords; j++) {
                 if (adjMatrix[i][j]) {

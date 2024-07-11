@@ -66,21 +66,20 @@ public class SortedNeighborhood {
      */
     public static RecordComparator suggestRecordComparatorFor(Relation relation) {
         List<AttrSimWeight> attrSimWeights = new ArrayList<>(relation.getAttributes().length);
-        double threshold = 0.8; // A reasonable default threshold for similarity
+        double threshold = 0.8;
 
         for (int i = 0; i < relation.getAttributes().length; i++) {
             String attributeType = relation.getAttributes()[i];
             AttrSimWeight attrSimWeight;
             switch (attributeType) {
                 case "string":
-                    attrSimWeight = new AttrSimWeight(i, new Levenshtein(), 0.1); // Weight can be adjusted
+                    attrSimWeight = new AttrSimWeight(i, new Levenshtein(), 0.1);
                     break;
                 case "tokenized_string":
-                    attrSimWeight = new AttrSimWeight(i, new Jaccard(new Tokenizer(3)), 0.2); // Weight can be adjusted
+                    attrSimWeight = new AttrSimWeight(i, new Jaccard(new Tokenizer(3)), 0.2);
                     break;
-                // Add more case statements as needed for other attribute types
                 default:
-                    attrSimWeight = new AttrSimWeight(i, new Levenshtein(), 0.1); // Default case
+                    attrSimWeight = new AttrSimWeight(i, new Levenshtein(), 0.1);
                     break;
             }
             attrSimWeights.add(attrSimWeight);
