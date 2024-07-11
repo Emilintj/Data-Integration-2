@@ -7,6 +7,11 @@ import java.util.Arrays;
 @AllArgsConstructor
 public class Levenshtein implements SimilarityMeasure {
 
+    public Levenshtein() {
+
+        withDamerau = false;
+    }
+
     public static int min(int... numbers) {
         return Arrays.stream(numbers).min().orElse(Integer.MAX_VALUE);
     }

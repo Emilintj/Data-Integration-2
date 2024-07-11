@@ -13,8 +13,6 @@ import java.util.*;
 
 public class SortedNeighborhood {
 
-    // A Record class that stores the values of a record with its original index. This class helps to remember the
-    // original index of a record when this record is being sorted.
     @Data
     @AllArgsConstructor
     private static class Record {
@@ -30,7 +28,7 @@ public class SortedNeighborhood {
      * the provided recordComparator is equal to or greater than the similarityThreshold.
      * @param relation The relation, in which duplicates should be detected.
      * @param sortingKeys The sorting keys that should be used; a sorting key corresponds to an attribute index, whose
-     *                    lexicographical order should determine a sortation; every specificed sorting key korresponds
+     *                    lexicographical order should determine a sortation; every specificed sorting key corresponds
      *                    to one Sorted Neighborhood run and the union of all duplicates of all runs is the result of
      *                    the call.
      * @param windowSize The window size each Sorted Neighborhood run should use.
@@ -41,19 +39,22 @@ public class SortedNeighborhood {
         Set<Duplicate> duplicates = new HashSet<>();
 
         Record[] records = new Record[relation.getRecords().length];
-        for (int i = 0; i < relation.getRecords().length; i++)
+        for (int i = 0; i < relation.getRecords().length; i++) {
             records[i] = new Record(i, relation.getRecords()[i]);
+        }
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //                                      DATA INTEGRATION ASSIGNMENT                                           //
-        // Discover all duplicates in the provided relation. A duplicate stores the attribute indexes that refer to   //
-        // matching records. Use the provided sortingKeys, windowSize, and recordComparator to implement the Sorted   //
-        // Neighborhood Method correctly.                                                                             //
+        for (int sortingKey : sortingKeys) {
+            Arrays.sort(records, Comparator.comparing(record -> record.getValues()[sortingKey]));
 
-
-
-        //                                                                                                            //
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            for (int i = 0; i < records.length; i++) {
+                for (int j = i + 1; j < i + windowSize && j < records.length; j++) {
+                    double similarity = recordComparator.compare(records[i].getValues(), records[j].getValues());
+                    if (recordComparator.isDuplicate(similarity)) {
+                        duplicates.add(new Duplicate(records[i].getIndex(), records[j].getIndex(), similarity, relation));
+                    }
+                }
+            }
+        }
 
         return duplicates;
     }
@@ -65,21 +66,25 @@ public class SortedNeighborhood {
      */
     public static RecordComparator suggestRecordComparatorFor(Relation relation) {
         List<AttrSimWeight> attrSimWeights = new ArrayList<>(relation.getAttributes().length);
-        double threshold = 0.0;
+        double threshold = 0.8; // A reasonable default threshold for similarity
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //                                      DATA INTEGRATION ASSIGNMENT                                           //
-        // Define the AttrSimWeight objects for a RecordComparator that matches the records of the provided relation  //
-        // possibly well, i.e., duplicate should receive possibly high similarity scores and non-duplicates should    //
-        // receive possibly low scores. In other words, put together a possibly effective ensemble of the already     //
-        // implemented similarity functions for duplicate detections runs on the provided relation. Side note: This   //
-        // is usually learned by machine learning algorithms, but a creative, heuristics-based solution is sufficient //
-        // here.                                                                                                      //
-
-
-
-        //                                                                                                            //
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        for (int i = 0; i < relation.getAttributes().length; i++) {
+            String attributeType = relation.getAttributes()[i];
+            AttrSimWeight attrSimWeight;
+            switch (attributeType) {
+                case "string":
+                    attrSimWeight = new AttrSimWeight(i, new Levenshtein(), 0.1); // Weight can be adjusted
+                    break;
+                case "tokenized_string":
+                    attrSimWeight = new AttrSimWeight(i, new Jaccard(new Tokenizer(3)), 0.2); // Weight can be adjusted
+                    break;
+                // Add more case statements as needed for other attribute types
+                default:
+                    attrSimWeight = new AttrSimWeight(i, new Levenshtein(), 0.1); // Default case
+                    break;
+            }
+            attrSimWeights.add(attrSimWeight);
+        }
 
         return new RecordComparator(attrSimWeights, threshold);
     }

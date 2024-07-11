@@ -27,7 +27,7 @@ public class UCC {
     public String toNaturalString() {
         String[] attributeLabels = new String[this.attributeList.size()];
         for (int i = 0; i < this.attributeList.size(); i++)
-            attributeLabels[i] = this.relation.getAttributes()[this.attributeList.getAttributes()[i]];
+            attributeLabels[i] = String.valueOf(this.relation.getAttributes()[this.attributeList.getAttributes()[i]]);
         return "UCC(" + this.relation.getName() + Arrays.toString(attributeLabels) + ")";
     }
 

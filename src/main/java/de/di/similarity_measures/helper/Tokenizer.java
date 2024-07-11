@@ -19,6 +19,12 @@ public class Tokenizer {
         this.usePadding = usePadding;
     }
 
+    public Tokenizer(int size) {
+
+        tokenSize = 0;
+        usePadding = false;
+    }
+
     /**
      * Tokenizes the input string into tokens of lengths this.tokenSize.
      * If "this.usePadding == true", the input strings are padded with "this.tokenSize - 1" paddingSymbols.

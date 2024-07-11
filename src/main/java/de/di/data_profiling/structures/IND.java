@@ -41,10 +41,10 @@ public class IND {
     public String toNaturalString() {
         String[] lhsAttributeLabels = new String[this.lhsAttributes.size()];
         for (int i = 0; i < this.lhsAttributes.size(); i++)
-            lhsAttributeLabels[i] = this.lhsRelation.getAttributes()[this.lhsAttributes.getAttributes()[i]];
+            lhsAttributeLabels[i] = String.valueOf(this.lhsRelation.getAttributes()[this.lhsAttributes.getAttributes()[i]]);
         String[] rhsAttributeLabels = new String[this.rhsAttributes.size()];
         for (int i = 0; i < this.rhsAttributes.size(); i++)
-            rhsAttributeLabels[i] = this.rhsRelation.getAttributes()[this.rhsAttributes.getAttributes()[i]];
+            rhsAttributeLabels[i] = String.valueOf(this.rhsRelation.getAttributes()[this.rhsAttributes.getAttributes()[i]]);
         return "IND(" + this.lhsRelation.getName() + Arrays.toString(lhsAttributeLabels) + ", "+ this.rhsRelation.getName() + Arrays.toString(rhsAttributeLabels) + ")";
     }
 

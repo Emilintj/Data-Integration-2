@@ -16,6 +16,11 @@ public class Jaccard implements SimilarityMeasure {
     // A flag indicating whether the Jaccard algorithm should use set or bag semantics for the similarity calculation.
     private final boolean bagSemantics;
 
+    public Jaccard(Tokenizer tokenizer) {
+        this.tokenizer = null;
+        bagSemantics = false;
+    }
+
     /**
      * Calculates the Jaccard similarity of the two input strings. Note that the Jaccard similarity may use set or
      * multiset, i.e., bag semantics for the union and intersect operations. The maximum Jaccard similarity with

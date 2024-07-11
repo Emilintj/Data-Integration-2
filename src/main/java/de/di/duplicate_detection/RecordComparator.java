@@ -60,6 +60,13 @@ public class RecordComparator {
         //                                                                                                            //
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        for(AttrSimWeight attrSimWeight:attrSimWeights){
+            int attributrIndex = attrSimWeight.getAttribute();
+            SimilarityMeasure similarityMeasure=attrSimWeight.getSimilarityMeasure();
+            double weight = attrSimWeight.getWeight();
+            double attributeSimilarity = similarityMeasure.calculate(tuple1[attributrIndex],tuple2[attributrIndex]);
+            recordSimilarity+=weight*attributeSimilarity;
+        }
         return recordSimilarity;
     }
 

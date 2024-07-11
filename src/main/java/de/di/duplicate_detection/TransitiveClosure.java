@@ -26,14 +26,34 @@ public class TransitiveClosure {
         Relation relation = duplicates.iterator().next().getRelation();
         int numRecords = relation.getRecords().length;
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //                                      DATA INTEGRATION ASSIGNMENT                                           //
-        // Calculate the transitive closure over the provided attributes using Warshall's (or Warren's) algorithm.    //
+        // Initialize the adjacency matrix
+        boolean[][] adjMatrix = new boolean[numRecords][numRecords];
 
+        // Populate the initial adjacency matrix based on the provided duplicates
+        for (Duplicate duplicate : duplicates) {
+            int id1 = duplicate.getIndex1();
+            int id2 = duplicate.getIndex2();
+            adjMatrix[id1][id2] = true;
+            adjMatrix[id2][id1] = true;
+        }
 
+        // Apply Warshall's algorithm to compute the transitive closure
+        for (int k = 0; k < numRecords; k++) {
+            for (int i = 0; i < numRecords; i++) {
+                for (int j = 0; j < numRecords; j++) {
+                    adjMatrix[i][j] = adjMatrix[i][j] || (adjMatrix[i][k] && adjMatrix[k][j]);
+                }
+            }
+        }
 
-        //                                                                                                            //
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Extract the transitive closure duplicates from the djacency matrix
+        for (int i = 0; i < numRecords; i++) {
+            for (int j = i + 1; j < numRecords; j++) {
+                if (adjMatrix[i][j]) {
+                    closedDuplicates.add(new Duplicate(i, j, 1.0, relation));
+                }
+            }
+        }
 
         return closedDuplicates;
     }
